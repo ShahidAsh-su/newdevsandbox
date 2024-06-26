@@ -38,6 +38,6 @@ jobs:
         if: steps.step3.outcome == 'success'
         id: step4
         run: |
-          sf package create --name ${{ secrets.PACKAGE_NAME }} --package-type Unlocked --path force-app --target-dev-hub shahidnewdev@clear.com
+          sfdx force:package:install -p 0HodL0000000CnZSAU -u 00DdL000005yPgbUAE -a package -k Sscdre1p --target-dev-hub shahidnewdev@clear.com
           
      
