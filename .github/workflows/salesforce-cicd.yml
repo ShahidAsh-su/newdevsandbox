@@ -9,16 +9,22 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        id: step1
 
       - name: Install Salesforce CLI
+        if: steps.step1.outcome == 'success'
+        id: step2
         run: |
           wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
           mkdir ~/sfdx
           tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
           echo "$HOME/sfdx/bin" >> $GITHUB_PATH
           ~/sfdx/bin/sfdx version
+          
 
       - name: Authenticate with Salesforce
+        if: steps.step2.outcome == 'success'
+        id: step3
         env:
           SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
           SF_USERNAME: ${{ secrets.SF_USERNAME }}
@@ -28,24 +34,21 @@ jobs:
           echo "$SF_PRIVATE_KEY" > server.key
           sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --set-default-dev-hub
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Create Package Version
+        if: steps.step3.outcome == 'success'
+        id: step4
         run: |
           sfdx package:version:create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Promote Package
+        if: steps.step4.outcome == 'success'
+        id: step5
         run: |
           sfdx force:package:version:promote --package ${{ secrets.PACKAGE_ID }}
           sfdx force:package:version:report --package  ${{ secrets.PACKAGE_ID }}
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Install Package
+        if: steps.step5.outcome == 'success'
+        id: step6
         run: |
           sfdx force:package:install -p ${{ secrets.PACKAGE_ID }} -u ${{ secrets.ORG_ALIAS }} -a package -k Sscdre1p
