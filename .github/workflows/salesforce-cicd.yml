@@ -1,0 +1,83 @@
+name: Salesforce CI/CD
+
+on:
+  workflow_dispatch:
+
+jobs:
+  authenticate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          tar xJf sfdx-linux-amd64.tar.xz
+          ./sfdx/install
+          export PATH=./sfdx/$(pwd):$PATH
+
+      - name: Authenticate with Salesforce
+        env:
+          SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
+          SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
+        run: |
+          echo "$SF_PRIVATE_KEY" > server.key
+          sfdx auth:jwt:grant --clientid $SF_CONSUMER_KEY --jwtkeyfile server.key --username $SF_USERNAME --instanceurl $SF_LOGIN_URL --setdefaultdevhubusername
+
+  create-package:
+    runs-on: ubuntu-latest
+    needs: authenticate
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          tar xJf sfdx-linux-amd64.tar.xz
+          ./sfdx/install
+          export PATH=./sfdx/$(pwd):$PATH
+
+      - name: Create Package Version
+        run: |
+          sfdx force:package:version:create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }}
+
+  promote-package:
+    runs-on: ubuntu-latest
+    needs: create-package
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          tar xJf sfdx-linux-amd64.tar.xz
+          ./sfdx/install
+          export PATH=./sfdx/$(pwd):$PATH
+
+      - name: Promote Package
+        run: |
+          sfdx force:package:version:promote --package ${{ secrets.PACKAGE_ID }}
+          sfdx force:package:version:report --package  ${{ secrets.PACKAGE_ID }}
+
+  install-package:
+    runs-on: ubuntu-latest
+    needs: promote-package
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Salesforce CLI
+        run: |
+          wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+          tar xJf sfdx-linux-amd64.tar.xz
+          ./sfdx/install
+          export PATH=./sfdx/$(pwd):$PATH
+
+      - name: Install Package
+        run: |
+          sfdx force:package:install -p ${{ secrets.PACKAGE_ID }} -u ${{ secrets.ORG_ALIAS }} -a package -k Sscdre1p
