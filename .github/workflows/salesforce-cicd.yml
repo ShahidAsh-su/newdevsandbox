@@ -32,13 +32,13 @@ jobs:
           SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
         run: |
           echo "$SF_PRIVATE_KEY" > server.key
-          sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --set-default-dev-hub
+          sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --alias my-hub-org
 
       - name: Create Package Version
         if: steps.step3.outcome == 'success'
         id: step4
         run: |
-          sfdx package:version:create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }}
+          sf package version create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }}
 
       - name: Promote Package
         if: steps.step4.outcome == 'success'
