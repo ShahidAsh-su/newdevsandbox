@@ -2,11 +2,28 @@
   "packageDirectories": [
     {
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "newPackage",
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "versionDescription": ""
+    },
+    {
+      "path": "force-app",
+      "package": "newPackageTest",
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "default": false,
+      "versionDescription": ""
     }
   ],
   "name": "personal_org",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "59.0"
+  "sourceApiVersion": "59.0",
+  "packageAliases": {
+    "newPackage": "0HodL0000000CpBSAU",
+    "newPackageTest": "0HodL0000000CqnSAE",
+    "newPackageTest@0.1.0-1": "04tdL000000284jQAA"
+  }
 }
