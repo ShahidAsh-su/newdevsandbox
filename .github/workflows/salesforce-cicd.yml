@@ -40,21 +40,4 @@ jobs:
         run: |
           sf package create --name ${{ secrets.PACKAGE_NAME }} --package-type Unlocked --path force-app --target-dev-hub shahidnewdev@clear.com
           
-      - name: Create Package Version
-        if: steps.step4.outcome == 'success'
-        id: step5
-        run: |
-          sf package version create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }}
-
-      - name: Promote Package
-        if: steps.step5.outcome == 'success'
-        id: step6
-        run: |
-          sfdx force:package:version:promote --package ${{ secrets.PACKAGE_ID }}
-          sfdx force:package:version:report --package  ${{ secrets.PACKAGE_ID }}
-
-      - name: Install Package
-        if: steps.step6.outcome == 'success'
-        id: step7
-        run: |
-          sfdx force:package:install -p ${{ secrets.PACKAGE_ID }} -u ${{ secrets.ORG_ALIAS }} -a package -k Sscdre1p
+     
