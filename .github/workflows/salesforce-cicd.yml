@@ -38,7 +38,7 @@ jobs:
         if: steps.step3.outcome == 'success'
         id: step4
         run: |
-          sf package create --name ${{ secrets.PACKAGE_NAME }} --package-type Unlocked --path force-app --set-default-dev-hub --alias my-hub-org
+          sf package create --name ${{ secrets.PACKAGE_NAME }} --package-type Unlocked --path force-app --target-dev-hub shahidnewdev@clear.com
           
       - name: Create Package Version
         if: steps.step4.outcome == 'success'
