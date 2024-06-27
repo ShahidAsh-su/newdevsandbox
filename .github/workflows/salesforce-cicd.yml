@@ -11,6 +11,10 @@ jobs:
         uses: actions/checkout@v2
         id: step1
 
+      - name: Install jq
+        run: |
+          sudo apt-get install jq
+
       - name: Install Salesforce CLI
         if: steps.step1.outcome == 'success'
         id: step2
@@ -34,10 +38,11 @@ jobs:
           echo "$SF_PRIVATE_KEY" > server.key
           sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --alias my-hub-org
 
-      - name: Create Package
-        if: steps.step3.outcome == 'success'
-        id: step4
+      - name: Create Package Version
+        if: steps.step4.outcome == 'success'
+        id: step5
         run: |
-          sfdx force:package:install -p 0HodL0000000CnZSAU -u 00DdL000005yPgbUAE -a package -k Sscdre1p --target-dev-hub shahidnewdev@clear.com
-          
-     
+          CREATE_OUTPUT=$(sf package version create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }} --json)
+          echo "Create Output: $CREATE_OUTPUT"
+          PACKAGE_VERSION_ID=$(echo $CREATE_OUTPUT | jq -r '.result.SubscriberPackageVersionId')
+          echo "PACKAGE_VERSION_ID=$PACKAGE_VERSION_ID" >> $GITHUB_ENV
