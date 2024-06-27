@@ -2,6 +2,15 @@ name: Salesforce CI/CD
 
 on:
   workflow_dispatch:
+    inputs:
+      packageName:
+        description: 'Name of the package'
+        required: true
+        default: 'YourPackageName'
+      versionNumber:
+        description: 'Version number for the package (e.g., 1.1.0.1)'
+        required: true
+        default: '1.1.0.1'
 
 jobs:
   authenticate:
@@ -42,8 +51,10 @@ jobs:
         if: steps.step3.outcome == 'success'
         id: step4
         run: |
-          echo "Creating package version for package: ${{ secrets.PACKAGE_NAME }} with version: ${{ github.sha }}"
-          CREATE_OUTPUT=$(sfdx force:package:version:create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }} --target-dev-hub shahidnewdev@clear.com --json)|| {
+          PACKAGE_NAME="${{ github.event.inputs.packageName }}"
+          VERSION_NUMBER="${{ github.event.inputs.versionNumber }}"
+          echo "Creating package version for package: $PACKAGE_NAME with version: ${{ github.sha }}"
+          CREATE_OUTPUT=$(sfdx force:package:version:create --package $PACKAGE_NAME --installation-key Sscdre1p --wait 10 -n $VERSION_NUMBER --target-dev-hub shahidnewdev@clear.com --json --definitionfile ../../sfdx-project.json)|| {
             echo "Failed to create package version"
             echo "Create Output: $CREATE_OUTPUT"
             exit 1
