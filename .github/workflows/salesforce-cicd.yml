@@ -51,7 +51,7 @@ jobs:
           PACKAGE_NAME="${{ github.event.inputs.packageName }}"
           VERSION_NUMBER="${{ github.event.inputs.versionNumber }}"
           echo "Creating package version for package: $PACKAGE_NAME with version: ${{ github.sha }}"
-          CREATE_OUTPUT=$(sf package version create --package $PACKAGE_NAME --installation-key Sscdre1p --wait 10 -n $VERSION_NUMBER --target-dev-hub shahidnewdev@clear.com --json --codecoverage none )|| {
+          CREATE_OUTPUT=$(force:package:version:create --package $PACKAGE_NAME --installation-key Sscdre1p --wait 10 -n $VERSION_NUMBER --target-dev-hub shahidnewdev@clear.com --json )|| {
             echo "Failed to create package version"
             echo "Create Output: $CREATE_OUTPUT"
             exit 1
