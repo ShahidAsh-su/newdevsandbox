@@ -20,32 +20,25 @@ jobs:
         uses: actions/checkout@v2
         id: step1
 
+      - name: Install Salesforce CLI
+        run: |
+          sudo npm install -g sfdx-cli
+
       - name: Install jq
         run: |
           sudo apt-get install jq
 
-      - name: Install Salesforce CLI
-        if: steps.step1.outcome == 'success'
-        id: step2
-        run: |
-          wget https://developer.salesforce.com/media/salesforce-cli/sfdx/channels/stable/sfdx-linux-x64.tar.xz
-          mkdir ~/sfdx
-          tar xJf sfdx-linux-x64.tar.xz -C ~/sfdx --strip-components 1
-          echo "$HOME/sfdx/bin" >> $GITHUB_PATH
-          ~/sfdx/bin/sfdx version
-          
-
-      - name: Authenticate with Salesforce
-        if: steps.step2.outcome == 'success'
-        id: step3
+      # Step to authenticate with Salesforce Dev Hub
+      - name: Authenticate with Dev Hub
         env:
-          SF_CONSUMER_KEY: ${{ secrets.SF_CONSUMER_KEY }}
-          SF_USERNAME: ${{ secrets.SF_USERNAME }}
-          SF_LOGIN_URL: ${{ secrets.SF_LOGIN_URL }}
-          SF_PRIVATE_KEY: ${{ secrets.SF_PRIVATE_KEY }}
+          # SFDX_AUTH_URL is a secret stored in GitHub Secrets
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
-          echo "$SF_PRIVATE_KEY" > server.key
-          sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --alias my-hub-org
+          echo "Authenticating with Dev Hub"
+          # Write the authentication URL to a file
+          echo $SFDX_AUTH_URL > auth_url.txt
+          # Use the Salesforce CLI to authenticate with the org
+          sfdx force:auth:sfdxurl:store -f auth_url.txt -a DevHub
 
       - name: Create Package Version
         if: steps.step3.outcome == 'success'
@@ -60,5 +53,6 @@ jobs:
             exit 1
           }
           echo "Create Output: $CREATE_OUTPUT"
+          echo "$CREATE_OUTPUT" | jq -r '.result.SubscriberPackageVersionId'
           PACKAGE_VERSION_ID=$(echo $CREATE_OUTPUT | jq -r '.result.SubscriberPackageVersionId')
           echo "PACKAGE_VERSION_ID=$PACKAGE_VERSION_ID" >> $GITHUB_ENV
