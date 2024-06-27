@@ -39,8 +39,8 @@ jobs:
           sfdx auth:jwt:grant --client-id $SF_CONSUMER_KEY --jwt-key-file server.key --username $SF_USERNAME --instance-url $SF_LOGIN_URL --alias my-hub-org
 
       - name: Create Package Version
-        if: steps.step4.outcome == 'success'
-        id: step5
+        if: steps.step3.outcome == 'success'
+        id: step4
         run: |
           CREATE_OUTPUT=$(sf package version create --package ${{ secrets.PACKAGE_NAME }} --installation-key Sscdre1p --wait 10 -n ${{ github.sha }} --json)
           echo "Create Output: $CREATE_OUTPUT"
