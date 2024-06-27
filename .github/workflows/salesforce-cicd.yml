@@ -60,3 +60,4 @@ jobs:
           echo "$CREATE_OUTPUT" | jq -r '.result.SubscriberPackageVersionId'
           PACKAGE_VERSION_ID=$(echo $CREATE_OUTPUT | jq -r '.result.SubscriberPackageVersionId')
           echo "PACKAGE_VERSION_ID=$PACKAGE_VERSION_ID" >> $GITHUB_ENV
+          echo "Create Output: $PACKAGE_VERSION_ID"
