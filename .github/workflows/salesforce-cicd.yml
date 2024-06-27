@@ -6,7 +6,7 @@ on:
       packageName:
         description: 'Name of the package'
         required: true
-        default: 'YourPackageName'
+        default: 'newPackageTest'
       versionNumber:
         description: 'Version number for the package (e.g., 1.1.0.1)'
         required: true
