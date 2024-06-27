@@ -21,6 +21,8 @@ jobs:
         id: step1
 
       - name: Install Salesforce CLI
+        if: steps.step1.outcome == 'success'
+        id: step2
         run: |
           sudo npm install -g @salesforce/cli
 
@@ -30,6 +32,8 @@ jobs:
 
       # Step to authenticate with Salesforce Dev Hub
       - name: Authenticate with Dev Hub
+        if: steps.step2.outcome == 'success'
+        id: step3
         env:
           # SFDX_AUTH_URL is a secret stored in GitHub Secrets
           SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
