@@ -1,4 +1,4 @@
-name: Create Package Version
+name: Promote Package Version
 
 on:
   workflow_dispatch:
