@@ -41,5 +41,5 @@ jobs:
         run: |
           VERSION_ID="${{ github.event.inputs.versionId }}"
           echo "Releasing package version for package: $VERSION_ID"
-          sfdx force:package:version:promote --package $VERSION_ID
-          sfdx force:package:version:report --package  $VERSION_ID
+          sfdx force:package:version:promote --package $VERSION_ID --target-dev-hub shahidnewdev@clear.com 
+          sfdx force:package:version:report --package  $VERSION_ID --target-dev-hub shahidnewdev@clear.com 
