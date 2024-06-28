@@ -1,0 +1,45 @@
+name: Create Package Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionId:
+        description: 'versionId which is returned from the create package version.'
+        required: true
+
+jobs:
+  authenticate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        id: step1
+
+      - name: Install Salesforce CLI
+        if: steps.step1.outcome == 'success'
+        id: step2
+        run: |
+          sudo npm install -g @salesforce/cli
+
+      # Step to authenticate with Salesforce Dev Hub
+      - name: Authenticate with Dev Hub
+        if: steps.step2.outcome == 'success'
+        id: step3
+        env:
+          # SFDX_AUTH_URL is a secret stored in GitHub Secrets
+          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
+        run: |
+          echo "Authenticating with Dev Hub"
+          # Write the authentication URL to a file
+          echo $SFDX_AUTH_URL > auth_url.txt
+          # Use the Salesforce CLI to authenticate with the org
+          sfdx force:auth:sfdxurl:store -f auth_url.txt -a DevHub
+
+      - name: Create Package Version
+        if: steps.step3.outcome == 'success'
+        id: step4
+        run: |
+          VERSION_ID="${{ github.event.inputs.versionId }}"
+          echo "Releasing package version for package: $VERSION_ID"
+          sfdx force:package:version:promote --package $VERSION_ID
+          sfdx force:package:version:report --package  $VERSION_ID
