@@ -23,6 +23,14 @@
       "versionNumber": "0.1.NEXT",
       "default": false,
       "versionDescription": ""
+    },
+    {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "path": "force-app",
+      "default": false,
+      "package": "codetes",
+      "versionDescription": ""
     }
   ],
   "name": "personal_org",
@@ -33,6 +41,8 @@
     "newPackage": "0HodL0000000CpBSAU",
     "newPackageTest": "0HodL0000000CqnSAE",
     "newPackageTest@0.1.0-1": "04tdL000000284jQAA",
-    "codetest": "0HodL0000000XDhSAM"
+    "codetest": "0HodL0000000XDhSAM",
+    "codetes": "0HodL0000000XFJSA2",
+    "codetes@0.1.0-1": "04tdL0000005E2LQAU"
   }
 }
