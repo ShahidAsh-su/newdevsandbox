@@ -41,4 +41,4 @@ jobs:
         run: |
           VERSION_ID="${{ github.event.inputs.versionId }}"
           echo "Installing package version : $VERSION_ID"
-          sfdx force:package:install -p $VERSION_ID -u DevHub -a package
+          sfdx force:package:install -p $VERSION_ID -u DevHub -a package --installation-key-bypass
