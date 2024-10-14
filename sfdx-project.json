@@ -32,6 +32,7 @@
   "packageAliases": {
     "newPackage": "0HodL0000000CpBSAU",
     "newPackageTest": "0HodL0000000CqnSAE",
-    "newPackageTest@0.1.0-1": "04tdL000000284jQAA"
+    "newPackageTest@0.1.0-1": "04tdL000000284jQAA",
+    "codetest": "0HodL0000000XDhSAM"
   }
 }
