@@ -15,6 +15,15 @@
       "versionNumber": "0.1.0.NEXT",
       "default": false,
       "versionDescription": ""
+    },
+    ,
+    {
+      "path": "force-app",
+      "package": "codetest",
+      "versionName": "ver 0.0.1",
+      "versionNumber": "0.0.1.NEXT",
+      "default": false,
+      "versionDescription": ""
     }
   ],
   "name": "personal_org",
