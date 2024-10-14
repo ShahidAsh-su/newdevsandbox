@@ -16,7 +16,6 @@
       "default": false,
       "versionDescription": ""
     },
-    ,
     {
       "path": "force-app",
       "package": "codetest",
