@@ -3,10 +3,10 @@ name: Update sfdx-project.json
 on:
   workflow_dispatch:
     inputs:
-      versionNumber:
+      packageName:
         description: 'Version number for the package (e.g., 1.1.0.1)'
         required: true
-        default: '20.25.35'
+        default: 'code'
       packageVersionId:
         description: 'Subscriber Package Version ID'
         required: true
@@ -32,18 +32,24 @@ jobs:
           git config --global user.name "${{ github.actor }}"
 
       - name: Extract Last Version Number
-        if: success()
-        id: extract-version
         run: |
-          # Extract the last version number from sfdx-project.json
-          LAST_VERSION=$(jq -r 'keys[] | select(startswith("code@"))' sfdx-project.json | sort | tail -n1 | sed 's/code@//')
-          echo "Last version: $LAST_VERSION"
-
-          # Increment the last version number (increase the build number)
-          IFS='.' read -ra VERSION_PARTS <<< "$LAST_VERSION"
-          VERSION_PARTS[3]=$((VERSION_PARTS[3] + 1))
-          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}.${VERSION_PARTS[3]}"
-          echo "New version: $NEW_VERSION"
+          PACKAGE_NAME="${{ github.event.inputs.packageName }}"
+          echo "Package name: $PACKAGE_NAME"
           
-          # Export the new version number for use in later steps
+          # Extract version strings for the given package
+          LAST_VERSION=$(jq -r --arg pkg "$PACKAGE_NAME@" '.packageAliases | to_entries[] | select(.key | startswith($pkg)) | .key' sfdx-project.json | sort -t'@' -k2 -V | tail -n1)
+          
+          if [ -z "$LAST_VERSION" ]; then
+            echo "No previous version found for $PACKAGE_NAME. Starting with 0.1.0-1."
+            NEW_VERSION="0.1.0-1"
+          else
+            echo "Last version found: $LAST_VERSION"
+            # Extract the version part and increment the build number
+            CURRENT_VERSION=$(echo "$LAST_VERSION" | sed "s/^$PACKAGE_NAME@//")
+            IFS='.-' read -ra VERSION_PARTS <<< "$CURRENT_VERSION"
+            VERSION_PARTS[3]=$((VERSION_PARTS[3] + 1))
+            NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}-${VERSION_PARTS[3]}"
+          fi
+
+          echo "Calculated new version: $NEW_VERSION"
           echo "VERSION_NUMBER=$NEW_VERSION" >> $GITHUB_ENV
