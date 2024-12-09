@@ -30,8 +30,6 @@ jobs:
         run: |
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config --global user.name "${{ github.actor }}"
-          echo "Failed to create package version"
-          exit 1
 
       - name: Extract Last Version Number
         if: steps.step2.outcome == 'success'
