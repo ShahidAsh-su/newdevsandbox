@@ -1,0 +1,56 @@
+name: Update sfdx-project.json
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionNumber:
+        description: 'Version number for the package (e.g., 1.1.0.1)'
+        required: true
+        default: '20.25.35'
+      packageVersionId:
+        description: 'Subscriber Package Version ID'
+        required: true
+        default: '04tOs000000GYP7IAO'
+
+jobs:
+  update-sfdx-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install jq
+        run: |
+          sudo apt-get install jq
+          
+      # Set Git user identity based on the current user
+      - name: Set Git user identity
+        run: |
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+
+      # Create a new branch for the changes
+      - name: Create a new branch and commit changes
+        run: |
+          VERSION_NUMBER="${{ github.event.inputs.versionNumber }}"
+          PACKAGE_VERSION_ID="${{ github.event.inputs.packageVersionId }}"
+          git checkout -b update-sfdx-project-${{ github.run_id }}
+          jq --arg version "$VERSION_NUMBER" --arg package "$PACKAGE_VERSION_ID" \
+            '.packageAliases["code@\($version)"] = "$package"' sfdx-project.json > tmp.json && mv tmp.json sfdx-project.json
+          git push origin update-sfdx-project-${{ github.run_id }}
+          git status
+
+      # Create a pull request for the new branch
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: update-sfdx-project-${{ github.run_id }}
+          title: "Update sfdx-project.json with version ${{ github.event.inputs.versionNumber }}"
+          signoff: false
+          commit-message: "Update sfdx-project.json with new version ${{ github.event.inputs.packageVersionId }}"
+          delete-branch: false
+          body: |
+            This pull request updates the `sfdx-project.json` file with the new version.
+          base: main
