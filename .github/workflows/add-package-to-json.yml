@@ -33,29 +33,19 @@ jobs:
           echo "Failed to create package version"
           exit 1
 
-      # Create a new branch for the changes
-      - name: Create a new branch and commit changes
-        if: success()
+      - name: Extract Last Version Number
+        if: steps.step2.outcome == 'success'
+        id: extract-version
         run: |
-          VERSION_NUMBER="${{ github.event.inputs.versionNumber }}"
-          PACKAGE_VERSION_ID="${{ github.event.inputs.packageVersionId }}"
-          git checkout -b update-sfdx-project-${{ github.run_id }}
-          jq --arg version "$VERSION_NUMBER" --arg package "$PACKAGE_VERSION_ID" \
-            '.packageAliases["code@\($version)"] = $package' sfdx-project.json > tmp.json && mv tmp.json sfdx-project.json
-          git push origin update-sfdx-project-${{ github.run_id }}
-          git status
+          # Extract the last version number from sfdx-project.json
+          LAST_VERSION=$(jq -r 'keys[] | select(startswith("code@"))' sfdx-project.json | sort | tail -n1 | sed 's/code@//')
+          echo "Last version: $LAST_VERSION"
 
-      # Create a pull request for the new branch
-      - name: Create Pull Request
-        if: success()
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: update-sfdx-project-${{ github.run_id }}
-          title: "Update sfdx-project.json with version ${{ github.event.inputs.versionNumber }}"
-          signoff: false
-          commit-message: "Update sfdx-project.json with new version ${{ github.event.inputs.packageVersionId }}"
-          delete-branch: false
-          body: |
-            This pull request updates the `sfdx-project.json` file with the new version. ~ ${{ github.event.inputs.packageVersionId }} ~ ${{ github.event.inputs.versionNumber }}
-          base: main
+          # Increment the last version number (increase the build number)
+          IFS='.' read -ra VERSION_PARTS <<< "$LAST_VERSION"
+          VERSION_PARTS[3]=$((VERSION_PARTS[3] + 1))
+          NEW_VERSION="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.${VERSION_PARTS[2]}.${VERSION_PARTS[3]}"
+          echo "New version: $NEW_VERSION"
+          
+          # Export the new version number for use in later steps
+          echo "VERSION_NUMBER=$NEW_VERSION" >> $GITHUB_ENV
