@@ -37,7 +37,7 @@ jobs:
           PACKAGE_VERSION_ID="${{ github.event.inputs.packageVersionId }}"
           git checkout -b update-sfdx-project-${{ github.run_id }}
           jq --arg version "$VERSION_NUMBER" --arg package "$PACKAGE_VERSION_ID" \
-            '.packageAliases["code@\($version)"] = "$package"' sfdx-project.json > tmp.json && mv tmp.json sfdx-project.json
+            '.packageAliases["code@\($version)"] = $package' sfdx-project.json > tmp.json && mv tmp.json sfdx-project.json
           git push origin update-sfdx-project-${{ github.run_id }}
           git status
 
