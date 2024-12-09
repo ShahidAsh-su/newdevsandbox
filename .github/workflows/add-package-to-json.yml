@@ -32,7 +32,7 @@ jobs:
           git config --global user.name "${{ github.actor }}"
 
       - name: Extract Last Version Number
-        if: steps.step2.outcome == 'success'
+        if: success()
         id: extract-version
         run: |
           # Extract the last version number from sfdx-project.json
