@@ -57,7 +57,7 @@ jobs:
             if [ "$PATCH" -lt 99 ]; then
               PATCH=$((PATCH + 1))
             else
-              PATCH=01
+              PATCH=1
               MINOR=$((MINOR + 1))
             fi
             
