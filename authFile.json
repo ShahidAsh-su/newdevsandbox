@@ -1,15 +1,15 @@
 {
   "status": 0,
   "result": {
-    "id": "00DdL000005yPgbUAE",
+    "id": "00D2x000000r8xZEAQ",
     "apiVersion": "62.0",
-    "accessToken": "00DdL000005yPgb!AQEAQNOJrt70AL5RskU0MEmZ1A_gijxVNuF1RzXozf.e0oW8Yo_YETkR2Y65yevtW_nuZp2dKpqujegKyiQaS8FEE.qLQXEW",
-    "instanceUrl": "https://cleartax3-dev-ed.develop.my.salesforce.com",
-    "username": "shahidnewdev@clear.com",
+    "accessToken": "00D2x000000r8xZ!AQEAQCsqnUa.BtaiczXyMaRD4_mjqGaIyql6ED5vU3QEv8tprnMoWyR0LvDIGMeJwEfwUcBW7CJZXJAojEGiMkzXCjz1pLwJ",
+    "instanceUrl": "https://cleartax.my.salesforce.com",
+    "username": "salesforce-ops@clear.in",
     "clientId": "PlatformCLI",
     "connectedStatus": "Connected",
-    "sfdxAuthUrl": "force://PlatformCLI::5Aep861njAMw_1t53uQp.WSzWEIlMczqmSuSiDe6eH_5l1WUtvgh9X8VjlX185JPG6sSOhpsVqKQrP.zkJyacHy@cleartax3-dev-ed.develop.my.salesforce.com",
-    "alias": "ShahidPersonal"
+    "sfdxAuthUrl": "force://PlatformCLI::5Aep861Xq7VoDavIt44w1DsaQc7Ln9lmOdwsagDS2HV69G3EUGp3qPCyo4r01vB85id.TM5F06D0gYTdwNPxtq5@cleartax.my.salesforce.com",
+    "alias": "PROD"
   },
   "warnings": [
     "This command will expose sensitive information that allows for subsequent activity using your current authenticated session.\nSharing this information is equivalent to logging someone in under the current credential, resulting in unintended access and escalation of privilege.\nFor additional information, please review the authorization section of the https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_web_flow.htm."
