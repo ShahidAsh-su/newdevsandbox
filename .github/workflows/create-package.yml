@@ -24,9 +24,6 @@ jobs:
       - name: Authenticate with Dev Hub
         if: steps.step2.outcome == 'success'
         id: step3
-        env:
-          # SFDX_AUTH_URL is a secret stored in GitHub Secrets
-          SFDX_AUTH_URL: ${{ secrets.SFDX_AUTH_URL }}
         run: |
           echo "Authenticating with Dev Hub updated"
           # Write the authentication URL to a file
