@@ -30,14 +30,5 @@ jobs:
         run: |
           echo "Authenticating with Dev Hub"
           # Write the authentication URL to a file
-          echo $SFDX_AUTH_URL > auth_url.txt
           # Use the Salesforce CLI to authenticate with the org
-          sfdx force:auth:sfdxurl:store -f auth_url.txt -a DevHub
-
-      - name: Create Package Version
-        if: steps.step3.outcome == 'success'
-        id: step4
-        run: |
-          VERSION_ID="${{ github.event.inputs.packagename }}"
-          echo "Installing package version : $VERSION_ID"
-          sfdx force:package:create -t Unlocked -r force-app -n $VERSION_ID --org-dependent --target-dev-hub DevHub 
+          sf org login sfdx-url --sfdx-url-file authFile.json
