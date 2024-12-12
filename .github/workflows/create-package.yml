@@ -31,4 +31,4 @@ jobs:
           echo "Authenticating with Dev Hub"
           # Write the authentication URL to a file
           # Use the Salesforce CLI to authenticate with the org
-          sf org login sfdx-url --sfdx-url-file authFile.json
+          sf org login sfdx-url --sfdx-url-file authFile.json -a DevHub
